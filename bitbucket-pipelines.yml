@@ -15,9 +15,9 @@ pipelines:
           - npm test
     - pipe: atlassian/heroku-deploy:1.0.1
         variables:
-          HEROKU_API_KEY: '<string>'
-          HEROKU_APP_NAME: '<string>'
+          HEROKU_API_KEY: $HEROKU_API_KEY
+          HEROKU_APP_NAME: keenserver
           ZIP_FILE: '<string>'
-          # WAIT: '<boolean>' # Optional.
+          WAIT: true # Optional.
           # DEBUG: '<boolean>' # Optional
 
