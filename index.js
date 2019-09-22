@@ -1,4 +1,5 @@
-require('./src/config/config')
+// require('./src/config/config')
+require('dotenv').config()
 const { MONGODB_URI, MONGODB_URI_OFFLINE, PORT, SSL_PORT, NODE_ENV } = process.env
 const { ApolloServer } = require('apollo-server')
 const fs = require('fs')
@@ -15,6 +16,8 @@ const { getUser } = require('./src/utils/helpers')
 
 const DB_URI = NODE_ENV ? MONGODB_URI : MONGODB_URI_OFFLINE
 new DB(superAdminDetails).connect(DB_URI)
+console.log(DB_URI)
+console.log(process.env.HEROKU_APP_NAME)
 
 const server = new ApolloServer({
   cors: true,

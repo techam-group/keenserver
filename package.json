@@ -19,6 +19,7 @@
 	"dependencies": {
 		"apollo-server": "2.7.2",
 		"bcrypt": "3.0.6",
+		"dotenv": "^8.1.0",
 		"extends-classes": "1.0.5",
 		"graphql": "14.4.2",
 		"graphql-iso-date": "3.6.1",
