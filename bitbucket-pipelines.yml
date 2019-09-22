@@ -17,7 +17,7 @@ pipelines:
         variables:
           HEROKU_API_KEY: $HEROKU_API_KEY
           HEROKU_APP_NAME: keenserver
-          ZIP_FILE: '<string>'
+          # ZIP_FILE: '<string>'
           WAIT: true # Optional.
           # DEBUG: '<boolean>' # Optional
 
