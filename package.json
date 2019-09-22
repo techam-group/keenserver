@@ -1,0 +1,33 @@
+{
+	"name": "keenacademiks_server",
+	"version": "1.0.0",
+	"description": "Building the server for project keenacademiks",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js",
+		"dev": "nodemon index.js"
+	},
+	"keywords": [
+		"graphql",
+		"server",
+		"node",
+		"mongodb",
+		"blog"
+	],
+	"author": "Favour George <phavorsparks@gmail.com>",
+	"license": "ISC",
+	"dependencies": {
+		"apollo-server": "2.7.2",
+		"bcrypt": "3.0.6",
+		"extends-classes": "1.0.5",
+		"graphql": "14.4.2",
+		"graphql-iso-date": "3.6.1",
+		"jsonwebtoken": "8.5.1",
+		"lodash": "4.17.15",
+		"mongoose": "5.6.7",
+		"nodemailer": "6.3.0"
+	},
+	"devDependencies": {
+		"nodemon": "1.19.1"
+	}
+}

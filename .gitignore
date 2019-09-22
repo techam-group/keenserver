@@ -1,0 +1,4 @@
+node_modules/
+..gitignore.swp
+src/config/config.json
+src/config/superAdmin.config.js
