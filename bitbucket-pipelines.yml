@@ -21,7 +21,7 @@ pipelines:
           - keenserver-*.zip
     - step:
         name: Deploy to production
-        deployment: production
+        deployment: staging
         script:
           - pipe: atlassian/heroku-deploy:1.0.1
             variables:
