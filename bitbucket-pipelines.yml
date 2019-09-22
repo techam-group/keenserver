@@ -11,16 +11,23 @@ pipelines:
         caches:
           - node
         script: # Modify the commands below to build your repository.
-          - zip -r keenserver-$BITBUCKET_BUILD_NUMBER.zip .
           - npm install
           - npm test
+    - step:
+        name: create artifact
+        script:
+          - zip -r keenserver-$BITBUCKET_BUILD_NUMBER.zip .
         artifact:
           - keenserver-*.zip
-    - pipe: atlassian/heroku-deploy:1.0.1
-        variables:
-          HEROKU_API_KEY: $HEROKU_API_KEY
-          HEROKU_APP_NAME: keenserver
-          ZIP_FILE: 'keenserver-$BITBUCKET_BUILD_NUMBER.zip'
-          WAIT: true # Optional.
-          DEBUG: 'false' # Optional
+    - step:
+        name: Deploy to production
+        deployment: production
+        script:
+          - pipe: atlassian/heroku-deploy:1.0.1
+            variables:
+              HEROKU_API_KEY: $HEROKU_API_KEY
+              HEROKU_APP_NAME: $HEROKU_APP_NAME
+              ZIP_FILE: "keenserver-$BITBUCKET_BUILD_NUMBER.zip"
+              WAIT: true # Optional.
+              DEBUG: "false" # Optional
 
