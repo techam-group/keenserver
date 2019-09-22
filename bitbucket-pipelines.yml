@@ -18,8 +18,8 @@ pipelines:
         name: create artifact
         script:
           - tar -czf keenserver-$BITBUCKET_BUILD_NUMBER.tar.gz .
-        artifact:
-          - keenserver-*.zip
+        artifacts:
+          - keenserver-*.tar.gz
     - step:
         name: Deploy to production
         deployment: production
