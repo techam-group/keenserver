@@ -17,7 +17,8 @@ pipelines:
     - step:
         name: create artifact
         script:
-          - tar --exclude=keenserver-$BITBUCKET_BUILD_NUMBER.tar.gz -czf keenserver-$BITBUCKET_BUILD_NUMBER.tar.gz .
+          - mkdir artefacts
+          - tar -czf artefacts/keenserver-$BITBUCKET_BUILD_NUMBER.tar.gz --exclude=./artefacts .
         artifacts:
           - keenserver-*.tar.gz
     - step:
