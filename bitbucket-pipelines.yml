@@ -28,7 +28,7 @@ pipelines:
           - pipe: atlassian/heroku-deploy:1.0.1
             variables:
               HEROKU_API_KEY: $HEROKU_API_KEY
-              HEROKU_APP_NAME: "keenserver"
+              HEROKU_APP_NAME: $HEROKU_APP_NAME
               ZIP_FILE: "keenserver-$BITBUCKET_BUILD_NUMBER.tar.gz"
               WAIT: "true" # Optional.
               DEBUG: "false" # Optional
