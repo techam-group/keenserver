@@ -27,8 +27,9 @@ pipelines:
         deployment: production
         script:
           - pipe: atlassian/heroku-deploy:1.0.1
+          - echo: $HEROKU_API_KEY
             variables:
-              HEROKU_API_KEY: $HEROKU_APIKEY
+              HEROKU_API_KEY: $HEROKU_API_KEY
               HEROKU_APP_NAME: "keenserver"
               ZIP_FILE: "keenserver-$BITBUCKET_BUILD_NUMBER.tar.gz"
               WAIT: "true" # Optional.
