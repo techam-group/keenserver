@@ -14,7 +14,7 @@ const dataSources = require('./src/datasources')
 
 const { getUser } = require('./src/utils/helpers')
 
-const DB_URI = NODE_ENV === 'production' ? MONGODB_URI : MONGODB_URI_OFFLINE
+const DB_URI = NODE_ENV ? MONGODB_URI : MONGODB_URI_OFFLINE
 
 new DB(superAdminDetails).connect(DB_URI)
 
@@ -33,13 +33,17 @@ const server = new ApolloServer({
 })
 
 server.listen(PORT).then(({ url }) => {
-  console.log(`🚀 Server ready at ${url}`)
+  console.log(`🚀 Server ready at ${NODE_ENV ? 'keenserver.herokuapp.com:' : ''}${url}`)
 })
+
+
 
 https.createServer({
   key: fs.readFileSync(path.join(process.cwd(), '/key.pem')),
   cert: fs.readFileSync(path.join(process.cwd(), '/cert.pem'))
 })
   .listen(SSL_PORT || 4141, () => {
-    console.log(`HTTPS server running on https://localhost:${SSL_PORT || 4141}/`)
+    console.log(`HTTPS server running on ${
+      NODE_ENV ?
+        'keenserver.herokuapp.com/' : 'https://localhost:'}${SSL_PORT || 4141}/`)
   }).setTimeout(780000)

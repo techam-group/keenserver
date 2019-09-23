@@ -19,7 +19,6 @@ class Database {
   }
 
   connect(DB_URL) {
-    console.log(DB_URL)
     mongoose.connect(DB_URL, options)
       .then(() => {
         console.log(`Successfully connected to DB`);
