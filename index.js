@@ -36,8 +36,6 @@ server.listen(PORT).then(({ url }) => {
   console.log(`🚀 Server ready at ${NODE_ENV ? 'keenserver.herokuapp.com' : url}`)
 })
 
-console.log(process.env)
-
 https.createServer({
   key: fs.readFileSync(path.join(process.cwd(), '/key.pem')),
   cert: fs.readFileSync(path.join(process.cwd(), '/cert.pem'))
