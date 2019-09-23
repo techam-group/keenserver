@@ -33,10 +33,10 @@ const server = new ApolloServer({
 })
 
 server.listen(PORT).then(({ url }) => {
-  console.log(`🚀 Server ready at ${NODE_ENV ? 'keenserver.herokuapp.com:' : ''}${url}`)
+  console.log(`🚀 Server ready at ${NODE_ENV ? 'keenserver.herokuapp.com' : url}`)
 })
 
-
+console.log(process.env)
 
 https.createServer({
   key: fs.readFileSync(path.join(process.cwd(), '/key.pem')),
@@ -45,5 +45,5 @@ https.createServer({
   .listen(SSL_PORT || 4141, () => {
     console.log(`HTTPS server running on ${
       NODE_ENV ?
-        'keenserver.herokuapp.com/' : 'https://localhost:'}${SSL_PORT || 4141}/`)
+        'keenserver.herokuapp.com:' : 'https://localhost:'}${SSL_PORT || 4141}/`)
   }).setTimeout(780000)
