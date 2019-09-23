@@ -16,7 +16,6 @@ const { getUser } = require('./src/utils/helpers')
 
 const DB_URI = NODE_ENV ? MONGODB_URI : MONGODB_URI_OFFLINE
 new DB(superAdminDetails).connect(DB_URI)
-console.log(DB_URI)
 
 const server = new ApolloServer({
   cors: true,

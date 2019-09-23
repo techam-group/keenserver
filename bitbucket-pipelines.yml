@@ -20,7 +20,6 @@ pipelines:
           - mkdir artefacts
           - tar -czf artefacts/keenserver-$BITBUCKET_BUILD_NUMBER.tar.gz --exclude=./artefacts .
           - cp artefacts/* .
-          - ls .
         artifacts:
           - keenserver-*.tar.gz
     - step:
@@ -29,7 +28,7 @@ pipelines:
         script:
           - pipe: atlassian/heroku-deploy:1.0.1
             variables:
-              HEROKU_API_KEY: $HEROKU_API_KEY
+              HEROKU_API_KEY: $HEROKU_APIKEY
               HEROKU_APP_NAME: "keenserver"
               ZIP_FILE: "keenserver-$BITBUCKET_BUILD_NUMBER.tar.gz"
               WAIT: "true" # Optional.
