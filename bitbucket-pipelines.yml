@@ -14,7 +14,6 @@ pipelines:
         script: # Modify the commands below to build your repository.
           - npm install
           - npm test
-          - echo $HEROKU_API_KEY
     - step:
         name: create artifact
         script:
