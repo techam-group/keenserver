@@ -14,8 +14,9 @@ const dataSources = require('./src/datasources')
 
 const { getUser } = require('./src/utils/helpers')
 
-const DB_URI = NODE_ENV ? MONGODB_URI : MONGODB_URI_OFFLINE
+const DB_URI = NODE_ENV === 'production' ? MONGODB_URI : MONGODB_URI_OFFLINE
 console.log(NODE_ENV)
+console.log('DB_URI', DB_URI)
 new DB(superAdminDetails).connect(DB_URI)
 
 const server = new ApolloServer({
