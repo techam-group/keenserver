@@ -12,13 +12,12 @@ class user extends Base {
   * returns: new user
   */
   async addUser(data) {
-    console.log(data)
     if (!data) throw new UserInputError('No provided credentials')
 
     const foundEmail = await User.findOne({ email: data.email })
 
     if (foundEmail) {
-      return `User with ${data.email} already exists`
+      throw new AuthenticationError(`User with ${data.email} already exists`)
     }
 
     data.password = await this.hashPassword(data.password)
@@ -56,13 +55,13 @@ class user extends Base {
       })
 
       if (!user) {
-        throw new UserInputError('No user found, please verify provided username or email ')
+        return new UserInputError('No user found, please verify provided username or email ')
       }
 
       const isValid = await this.comparePassword(password, user.password)
 
       if (!isValid) {
-        throw new UserInputError('Incorrect password ')
+        return new UserInputError('Incorrect password ')
       }
 
       const payload = {
