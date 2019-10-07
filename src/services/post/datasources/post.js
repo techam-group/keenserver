@@ -1,8 +1,8 @@
-const { AuthenticationError, UserInputError } = require( 'apollo-server' )
+const { AuthenticationError, UserInputError } = require('apollo-server-express')
 
-const Base = require( '../../../base' )
-const Post = require( '../../../models/posts/posts.schema' )
-const User = require( '../../../models/users/users.schema' )
+const Base = require('../../../base')
+const Post = require('../../../models/posts/posts.schema')
+const User = require('../../../models/users/users.schema')
 
 class post extends Base {
   // Mutations
@@ -12,8 +12,8 @@ class post extends Base {
   * @params: data
   * returns: new Post
   */
-  async addPost( data, AuthUser ) {
-    if ( !data ) throw new UserInputError( 'Please provide the required fields' )
+  async addPost(data, AuthUser) {
+    if (!data) throw new UserInputError('Please provide the required fields')
 
     try {
       const payload = {
@@ -21,14 +21,14 @@ class post extends Base {
         author: AuthUser.id
       }
 
-      const user = await User.findOne( { _id: AuthUser.id } )
-      const post = await Post.create( payload )
+      const user = await User.findOne({ _id: AuthUser.id })
+      const post = await Post.create(payload)
 
-      user.posts.push( post._id )
+      user.posts.push(post._id)
 
       await user.save()
       return post
-    } catch ( error ) {
+    } catch (error) {
       return error.message;
     }
   }
@@ -38,23 +38,23 @@ class post extends Base {
   * @params: data
   * returns: String
   */
-  async updatePost( data, AuthUser ) { // TODO
-    if ( !data ) throw new UserInputError( 'Please provide the required fields' )
+  async updatePost(data, AuthUser) { // TODO
+    if (!data) throw new UserInputError('Please provide the required fields')
 
     try {
       const foundPost = await Post.findOne(
         { _id: data.id }
-      ).where( { author: AuthUser.id } )
+      ).where({ author: AuthUser.id })
 
-      if ( foundPost ) {
-        const updatedPost = await Post.updateOne( {
+      if (foundPost) {
+        const updatedPost = await Post.updateOne({
           _id: data.id
-        }, { $set: data }, { new: true } )
-        if ( updatedPost ) return 'update successful'
+        }, { $set: data }, { new: true })
+        if (updatedPost) return 'update successful'
       } else {
-        throw new AuthenticationError( 'You are not the creator of the post' )
+        throw new AuthenticationError('You are not the creator of the post')
       }
-    } catch ( error ) {
+    } catch (error) {
       return error.message
     }
   }
@@ -64,8 +64,8 @@ class post extends Base {
   * @params: id!
   * returns: String
   */
-  async changeLikeState( id ) { // TODO
-    if ( !id ) throw new UserInputError( 'No provided ID' )
+  async changeLikeState(id) { // TODO
+    if (!id) throw new UserInputError('No provided ID')
 
     try {
       const updatePost = await Post.updateOne(
@@ -74,9 +74,9 @@ class post extends Base {
         { new: true }
       );
 
-      if ( updatePost.ok === 1 ) return 'update successful'
-    } catch ( e ) {
-      throw new Error( e )
+      if (updatePost.ok === 1) return 'update successful'
+    } catch (e) {
+      throw new Error(e)
     }
   }
 
@@ -85,8 +85,8 @@ class post extends Base {
   * @params: id!
   * returns: String
   */
-  async changePublishState( id ) {
-    if ( !id ) throw new UserInputError( 'No provided ID' )
+  async changePublishState(id) {
+    if (!id) throw new UserInputError('No provided ID')
 
     try {
       const updatePost = await Post.updateOne(
@@ -95,9 +95,9 @@ class post extends Base {
         { new: true }
       );
 
-      if ( updatePost.ok === 1 ) return 'update successful'
-    } catch ( e ) {
-      throw new Error( e )
+      if (updatePost.ok === 1) return 'update successful'
+    } catch (e) {
+      throw new Error(e)
     }
   }
 
@@ -106,21 +106,21 @@ class post extends Base {
   * @params: id
   * returns: String
   */
-  async deletePost( id, AuthUser ) {
-    if ( !id ) throw new UserInputError( 'No provided ID' )
+  async deletePost(id, AuthUser) {
+    if (!id) throw new UserInputError('No provided ID')
 
     try {
-      const post = await Post.findOne( { _id: id } )
-      const author = await User.findOne( { _id: AuthUser.id } )
+      const post = await Post.findOne({ _id: id })
+      const author = await User.findOne({ _id: AuthUser.id })
 
-      author.posts.pop( post._id )
+      author.posts.pop(post._id)
       await author.save()
 
-      const deletedPost = await Post.deleteOne( { _id: post._id } )
+      const deletedPost = await Post.deleteOne({ _id: post._id })
 
-      if ( deletedPost ) return 'post deleted successfully'
-    } catch ( e ) {
-      throw new Error( 'Invalid Post ID' )
+      if (deletedPost) return 'post deleted successfully'
+    } catch (e) {
+      throw new Error('Invalid Post ID')
     }
   }
 
@@ -130,14 +130,14 @@ class post extends Base {
   * getAllPosts
   * returns: an array of all posts
   */
-  async getAllPosts( filter ) {
+  async getAllPosts(filter) {
     try {
-      return await Post.find( {}, null, filter ).populate( {
+      return await Post.find({}, null, filter).populate({
         path: 'author',
         model: 'User'
-      } )
-    } catch ( e ) {
-      return new Error( e.message )
+      })
+    } catch (e) {
+      return new Error(e.message)
     }
   }
 
@@ -145,16 +145,16 @@ class post extends Base {
   * getAllPublishedPosts
   * returns: an array of all published posts
   */
-  async getAllPublishedPosts( filter ) {
+  async getAllPublishedPosts(filter) {
     try {
-      return await Post.find( {
+      return await Post.find({
         isPublished: true
-      }, null, filter ).populate( {
+      }, null, filter).populate({
         path: 'author',
         model: 'User'
-      } )
-    } catch ( e ) {
-      return new Error( e.message )
+      })
+    } catch (e) {
+      return new Error(e.message)
     }
   }
 
@@ -162,18 +162,18 @@ class post extends Base {
   * getAllUserPublishedPosts
   * returns: an array of all published posts by a user
   */
-  async getAllUserPublishedPosts( filter, AuthUser ) {
+  async getAllUserPublishedPosts(filter, AuthUser) {
     try {
-      return await Post.find( {
+      return await Post.find({
         isPublished: true
-      }, null, filter ).
-        where( { author: AuthUser.id } ).
-        populate( {
+      }, null, filter).
+        where({ author: AuthUser.id }).
+        populate({
           path: 'author',
           model: 'User'
-        } )
-    } catch ( e ) {
-      return new Error( e.message )
+        })
+    } catch (e) {
+      return new Error(e.message)
     }
   }
 
@@ -182,16 +182,16 @@ class post extends Base {
   * @params: ID
   * returns: an array of posts for a user
   */
-  async getUserPosts( filter, AuthUser ) {
+  async getUserPosts(filter, AuthUser) {
     try {
-      return await Post.find( {}, null, filter ).
-        where( { author: AuthUser.id } ).
-        populate( {
+      return await Post.find({}, null, filter).
+        where({ author: AuthUser.id }).
+        populate({
           path: 'author',
           model: 'User'
-        } )
-    } catch ( e ) {
-      throw new Error( e.message )
+        })
+    } catch (e) {
+      throw new Error(e.message)
     }
   }
 
@@ -200,16 +200,16 @@ class post extends Base {
   * @params: id
   * returns: a single post
   */
-  async getPost( id ) {
-    if ( !id ) throw new UserInputError( 'No provided ID' )
+  async getPost(id) {
+    if (!id) throw new UserInputError('No provided ID')
 
     try {
-      return await Post.findOne( { _id: id } ).select( '-__v' ).populate( {
+      return await Post.findOne({ _id: id }).select('-__v').populate({
         path: 'author',
         model: 'User'
-      } )
-    } catch ( e ) {
-      throw new Error( 'Ivalid ID' )
+      })
+    } catch (e) {
+      throw new Error('Ivalid ID')
     }
   }
 }

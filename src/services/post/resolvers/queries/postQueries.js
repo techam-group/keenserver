@@ -1,4 +1,4 @@
-const { AuthenticationError } = require('apollo-server')
+const { AuthenticationError } = require('apollo-server-express')
 
 const postResolverQueries = {
   getAllPosts: async (parent, fields, { AuthUser, dataSources: { post } }) => {

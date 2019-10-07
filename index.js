@@ -1,7 +1,7 @@
 // require('./src/config/config')
 require('dotenv').config()
 const { MONGODB_URI, MONGODB_URI_OFFLINE, PORT, SSL_PORT, NODE_ENV } = process.env
-const { ApolloServer } = require('apollo-server')
+const { ApolloServer } = require('apollo-server-express')
 const fs = require('fs')
 const path = require('path')
 const https = require('https')

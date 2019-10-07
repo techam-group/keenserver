@@ -1,4 +1,4 @@
-const { gql } = require( 'apollo-server' )
+const { gql } = require('apollo-server-express')
 
 const userDef = gql`
   extend type Query {
