@@ -1,12 +1,15 @@
 // require('./src/config/config')
 require('dotenv').config()
-const { MONGODB_URI, MONGODB_URI_OFFLINE, PORT, SSL_PORT, NODE_ENV } = process.env
+const { MONGODB_URI, MONGODB_URI_OFFLINE, PORT, /* SSL_PORT, */ NODE_ENV, BASE_URL } = process.env
 const { ApolloServer } = require('apollo-server-express')
-const fs = require('fs')
-const path = require('path')
-const https = require('https')
+const express = require('express')
+const cors = require('cors')
+// const fs = require('fs')
+// const path = require('path')
+// const https = require('https')
 const DB = require('./src/database')
 const superAdminDetails = require('./src/config/superAdmin.config')
+const allowedOrigins = ["https://keencademiks.now.sh", "https://keenclient.phavor.now.sh", "http://localhost:3000", "localhost:3000"]
 
 const typeDefs = require('./src/types')
 const resolvers = require('./src/resolvers')
@@ -14,12 +17,13 @@ const dataSources = require('./src/datasources')
 
 const { getUser } = require('./src/utils/helpers')
 
-const DB_URI = NODE_ENV ? MONGODB_URI : MONGODB_URI_OFFLINE
+const app = express()
+app.use(cors(allowedOrigins))
 
+const DB_URI = NODE_ENV ? MONGODB_URI : MONGODB_URI_OFFLINE
 new DB(superAdminDetails).connect(DB_URI)
 
 const server = new ApolloServer({
-  cors: true,
   typeDefs,
   resolvers,
   context: async ({ req }) => {
@@ -32,16 +36,19 @@ const server = new ApolloServer({
   dataSources: () => (dataSources)
 })
 
-server.listen(PORT).then(({ url }) => {
-  console.log(`🚀 Server ready at ${NODE_ENV ? 'keenserver.herokuapp.com' : url}`)
-})
+const BASE_SERVER = NODE_ENV ?
+  `${BASE_URL}${server.graphqlPath}` :
+  `http://localhost:${PORT}${server.graphqlPath}`
 
-https.createServer({
-  key: fs.readFileSync(path.join(process.cwd(), '/key.pem')),
-  cert: fs.readFileSync(path.join(process.cwd(), '/cert.pem'))
-})
-  .listen(SSL_PORT || 4141, () => {
-    console.log(`HTTPS server running on ${
-      NODE_ENV ?
-        'keenserver.herokuapp.com:' : 'https://localhost:'}${SSL_PORT || 4141}/`)
-  }).setTimeout(780000)
+server.applyMiddleware({ app, cors: false, path: '/' })
+app.listen(PORT, () => console.log(`🚀 Server ready at ${BASE_SERVER}`))
+
+// https.createServer({
+//   key: fs.readFileSync(path.join(process.cwd(), '/key.pem')),
+//   cert: fs.readFileSync(path.join(process.cwd(), '/cert.pem'))
+// })
+//   .listen(SSL_PORT || 4141, () => {
+//     console.log(`HTTPS server running on ${
+//       NODE_ENV ?
+//         'keenserver.herokuapp.com:' : 'https://localhost:'}${SSL_PORT || 4141}/`)
+//   }).setTimeout(780000)

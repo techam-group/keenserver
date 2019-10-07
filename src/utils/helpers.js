@@ -1,4 +1,4 @@
-const SECRET = process.env.APP_SECRET
+const { SECRET_KEY } = process.env
 const jwt = require("jsonwebtoken")
 
 module.exports = {
@@ -6,7 +6,7 @@ module.exports = {
     try {
       if (token) {
         token = token.split(' ')[1]
-        const AuthUser = await jwt.verify(token, SECRET)
+        const AuthUser = await jwt.verify(token, SECRET_KEY)
         return AuthUser
       }
       return null
