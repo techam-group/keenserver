@@ -1,7 +1,7 @@
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const { SECRET_KEY, CLIENT_URL, CLIENT_URL_LOCAL, SALT_ROUND, NODE_ENV } = process.env
-const BASE_URL = NODE_ENV ? CLIENT_URL : CLIENT_URL_LOCAL
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { SECRET_KEY, CLIENT_URL, CLIENT_URL_LOCAL, SALT_ROUND, NODE_ENV } = process.env;
+const BASE_URL = NODE_ENV ? CLIENT_URL : CLIENT_URL_LOCAL;
 
 class Utils {
 
@@ -26,17 +26,17 @@ class Utils {
   }
 
   async verifyEmailToken(token) {
-    const isValid = await jwt.verify(token, SECRET_KEY)
+    const isValid = await jwt.verify(token, SECRET_KEY);
 
-    return isValid ? true : false
+    return !!isValid
   }
 
   async getEVTTemplate(title, EVT, resend = false) {
     if (resend === 'resend') {
-      return await `
+      return `
     <body style="display: flex; justify-content: flex-start; padding-top: 1.5rem; align-items: center; flex-direction: column; font-family: helvetica, 'sans-serif'; color: #5a5a5a;">
       <h2 style="color: #505050;">${title}</h2>
-      <p>You requested for reverification of your email 
+      <p>You requested for re-verification of your email 
         <br /><br />
         Click the button below to verify your email
         <a href="${BASE_URL}/verify-email?token=${EVT}" style="background: violet; color: white; padding: 0.89rem 2rem; border-radius: 3px; display: block; text-align: center; text-decoration: none; margin-top: 2rem;">
@@ -48,15 +48,15 @@ class Utils {
         <p>
       </p>
     </body>
-    `
+    `;
     }
 
-    return await `
+    return `
     <body style="display: flex; justify-content: flex-start; padding-top: 1.5rem; align-items: center; flex-direction: column; font-family: helvetica, 'sans-serif'; color: #5a5a5a;">
       <h2 style="color: #505050;">${title}</h2>
-      <p>We are so glad to have you onboard our platform. 
+      <p>We are so glad to have you on-boarding our platform. 
         <br /><br />
-        You can continue to your dashboard by loggin in
+        You can continue to your dashboard by login in
         <a href="${BASE_URL}/verify-email?token=${EVT}" style="background: violet; color: white; padding: 0.89rem 2rem; border-radius: 3px; display: block; text-align: center; text-decoration: none; margin-top: 2rem;">
         here
         </a>
@@ -66,8 +66,8 @@ class Utils {
         </p>
       </p>
     </body>
-    `
+    `;
   }
 }
 
-module.exports = Utils
+module.exports = Utils;
