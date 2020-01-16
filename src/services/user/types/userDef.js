@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express')
+const { gql } = require('apollo-server-express');
 
 const userDef = gql`
   extend type Query {
@@ -10,7 +10,7 @@ const userDef = gql`
   }
 
   extend type Mutation {
-    addUser(data: UserInput!): String!
+    addUser(data: UserInput!): AddUserResponse!
     loginUser(data: UserLogin!): LoginResponse!
     verifyEmail(emailToken: String!): String!
     updateUser(data: UserInputUpdate): String!
@@ -32,6 +32,10 @@ const userDef = gql`
 
   type LoginResponse {
     token: String
+  }
+  
+  type AddUserResponse {
+      token: String
   }
 
   input UserFilterInput {
@@ -64,6 +68,6 @@ const userDef = gql`
     MODERATOR
     USER
   }
-`
+`;
 
-module.exports = userDef
+module.exports = userDef;

@@ -1,7 +1,7 @@
 {
-	"name": "keenacademiks_server",
+	"name": "keencademiks_server",
 	"version": "1.0.0",
-	"description": "Building the server for project keenacademiks",
+	"description": "Building the server for project keencademiks",
 	"main": "index.js",
 	"scripts": {
 		"start": "node index.js",
