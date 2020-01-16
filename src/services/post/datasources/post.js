@@ -1,8 +1,8 @@
-const { AuthenticationError, UserInputError } = require('apollo-server-express')
+const { AuthenticationError, UserInputError } = require('apollo-server-express');
 
-const Base = require('../../../base')
-const Post = require('../../../models/posts/posts.schema')
-const User = require('../../../models/users/users.schema')
+const Base = require('../../../base');
+const Post = require('../../../models/posts/posts.schema');
+const User = require('../../../models/users/users.schema');
 
 class post extends Base {
   // Mutations
@@ -13,21 +13,23 @@ class post extends Base {
   * returns: new Post
   */
   async addPost(data, AuthUser) {
-    if (!data) throw new UserInputError('Please provide the required fields')
+    if (!data) throw new UserInputError('Please provide the required fields');
 
     try {
       const payload = {
         ...data,
         author: AuthUser.id
-      }
+      };
 
-      const user = await User.findOne({ _id: AuthUser.id })
-      const post = await Post.create(payload)
+      const user = await User.findOne({ _id: AuthUser.id });
+      if (!user) new UserInputError('No user found, looks like you are not logged in');
 
-      user.posts.push(post._id)
+      const post = await Post.create(payload);
 
-      await user.save()
-      return post
+      user.posts.push(post._id);
+
+      await user.save();
+      return 'post created...'
     } catch (error) {
       return error.message;
     }
@@ -39,17 +41,17 @@ class post extends Base {
   * returns: String
   */
   async updatePost(data, AuthUser) { // TODO
-    if (!data) throw new UserInputError('Please provide the required fields')
+    if (!data) throw new UserInputError('Please provide the required fields');
 
     try {
       const foundPost = await Post.findOne(
         { _id: data.id }
-      ).where({ author: AuthUser.id })
+      ).where({ author: AuthUser.id });
 
       if (foundPost) {
         const updatedPost = await Post.updateOne({
           _id: data.id
-        }, { $set: data }, { new: true })
+        }, { $set: data }, { new: true });
         if (updatedPost) return 'update successful'
       } else {
         throw new AuthenticationError('You are not the creator of the post')
@@ -65,7 +67,7 @@ class post extends Base {
   * returns: String
   */
   async changeLikeState(id) { // TODO
-    if (!id) throw new UserInputError('No provided ID')
+    if (!id) throw new UserInputError('No provided ID');
 
     try {
       const updatePost = await Post.updateOne(
@@ -86,7 +88,7 @@ class post extends Base {
   * returns: String
   */
   async changePublishState(id) {
-    if (!id) throw new UserInputError('No provided ID')
+    if (!id) throw new UserInputError('No provided ID');
 
     try {
       const updatePost = await Post.updateOne(
@@ -107,16 +109,16 @@ class post extends Base {
   * returns: String
   */
   async deletePost(id, AuthUser) {
-    if (!id) throw new UserInputError('No provided ID')
+    if (!id) throw new UserInputError('No provided ID');
 
     try {
-      const post = await Post.findOne({ _id: id })
-      const author = await User.findOne({ _id: AuthUser.id })
+      const post = await Post.findOne({ _id: id });
+      const author = await User.findOne({ _id: AuthUser.id });
 
-      author.posts.pop(post._id)
-      await author.save()
+      author.posts.pop(post._id);
+      await author.save();
 
-      const deletedPost = await Post.deleteOne({ _id: post._id })
+      const deletedPost = await Post.deleteOne({ _id: post._id });
 
       if (deletedPost) return 'post deleted successfully'
     } catch (e) {
@@ -201,7 +203,7 @@ class post extends Base {
   * returns: a single post
   */
   async getPost(id) {
-    if (!id) throw new UserInputError('No provided ID')
+    if (!id) throw new UserInputError('No provided ID');
 
     try {
       return await Post.findOne({ _id: id }).select('-__v').populate({
@@ -214,4 +216,4 @@ class post extends Base {
   }
 }
 
-module.exports = post
+module.exports = post;

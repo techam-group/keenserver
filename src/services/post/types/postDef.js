@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express')
+const { gql } = require('apollo-server-express');
 
 const postDef = gql`
   extend type Query {
@@ -10,7 +10,7 @@ const postDef = gql`
   }
 
   extend type Mutation {
-    addPost(data: postInput): Post
+    addPost(data: postInput): String!
     updatePost(data: updatePostInput): String
     changeLikeState(id: ID!): String
     changePublishState(id: ID!): String
@@ -58,6 +58,6 @@ const postDef = gql`
     image: String
     isPublished: Boolean
   }
-`
+`;
 
-module.exports = postDef
+module.exports = postDef;
