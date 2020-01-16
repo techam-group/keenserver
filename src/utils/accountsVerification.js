@@ -1,6 +1,6 @@
-const { NODE_ENV, USER_NAME, USER_PASS } = process.env
-const dev = NODE_ENV || 'development'
-const nodemailer = require( 'nodemailer' )
+const { NODE_ENV, USER_NAME, USER_PASS } = process.env;
+const dev = NODE_ENV || 'development';
+const nodemailer = require( 'nodemailer' );
 
 // Email Verification Service
 class AccountsVerification {
@@ -18,7 +18,7 @@ class AccountsVerification {
         user: USER_NAME,
         pass: USER_PASS
       }
-    } )
+    } );
 
     try {
       const options = {
@@ -26,9 +26,9 @@ class AccountsVerification {
         to: email,
         subject: subject,
         html: message
-      }
+      };
 
-      let info = await transporter.sendMail( options )
+      let info = await transporter.sendMail( options );
 
       console.log( 'Message sent: %s', info.messageId );
       // console.log( 'Preview URL: %s', nodemailer.getTestMessageUrl( info ) );
@@ -46,7 +46,7 @@ class AccountsVerification {
         user: USER_NAME,
         pass: USER_PASS
       }
-    } )
+    } );
 
     try {
       const options = {
@@ -54,7 +54,7 @@ class AccountsVerification {
         to: email,
         subject: subject,
         html: message
-      }
+      };
       let info = await transporter.sendMail( options );
 
       console.log( 'Message sent: %s', info.messageId );
@@ -65,4 +65,4 @@ class AccountsVerification {
   }
 }
 
-module.exports = AccountsVerification
+module.exports = AccountsVerification;

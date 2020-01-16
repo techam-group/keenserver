@@ -31,7 +31,7 @@ class Utils {
     return !!isValid
   }
 
-  async getEVTTemplate(title, EVT, resend = false) {
+  async getEVTTemplate(title, EVT, resend) {
     if (resend === 'resend') {
       return `
     <body style="display: flex; justify-content: flex-start; padding-top: 1.5rem; align-items: center; flex-direction: column; font-family: helvetica, 'sans-serif'; color: #5a5a5a;">
