@@ -6,7 +6,7 @@ const postDef = gql`
     getAllPosts: [Post]
     getUserPosts: [Post]
     getAllUserPublishedPosts: [Post]
-    getPost(id: ID): Post
+    getPost(id: ID!): Post
   }
 
   extend type Mutation {
