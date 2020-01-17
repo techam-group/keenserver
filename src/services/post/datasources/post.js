@@ -15,50 +15,32 @@ class post extends Base {
   async addPost(data, AuthUser) {
     if (!data) throw new UserInputError('Please provide the required fields');
 
-    try {
-      const payload = {
-        ...data,
-        author: AuthUser.id
-      };
+    const post = await Post.findOne({
+      $or: [{title: data.title}, {_id: data.id}]
+    }).where({ author: AuthUser.id });
 
-      const user = await User.findOne({ _id: AuthUser.id });
-      if (!user) new UserInputError('No user found, looks like you are not logged in');
+    if (post) {
+      post.title = data.title;
+      post.body = data.body;
+      post.category = data.category;
+      post.isPublished = data.isPublished;
+      post.image = data.image;
 
-      const post = await Post.create(payload);
-
-      user.posts.push(post._id);
-
-      await user.save();
-      return 'post created...'
-    } catch (error) {
-      return error.message;
+      await post.save();
+      return 'post updated'
     }
-  }
 
-  /*
-  * updatePost in DB
-  * @params: data
-  * returns: String
-  */
-  async updatePost(data, AuthUser) { // TODO
-    if (!data) throw new UserInputError('Please provide the required fields');
+    const payload = {
+      ...data,
+      author: AuthUser.id
+    };
 
-    try {
-      const foundPost = await Post.findOne(
-        { _id: data.id }
-      ).where({ author: AuthUser.id });
+    const user = await User.findOne({_id: AuthUser.id});
+    const newPost = await Post.create(payload);
 
-      if (foundPost) {
-        const updatedPost = await Post.updateOne({
-          _id: data.id
-        }, { $set: data }, { new: true });
-        if (updatedPost) return 'update successful'
-      } else {
-        throw new AuthenticationError('You are not the creator of the post')
-      }
-    } catch (error) {
-      return error.message
-    }
+    user.posts.push(newPost._id);
+    await user.save();
+    return 'post created...';
   }
 
   /*
@@ -90,16 +72,20 @@ class post extends Base {
   async changePublishState(id) {
     if (!id) throw new UserInputError('No provided ID');
 
-    try {
-      const updatePost = await Post.updateOne(
-        { _id: id },
-        { $set: { isPublished: true } },
-        { new: true }
-      );
+    const post = await Post.findOne({_id: id});
 
-      if (updatePost.ok === 1) return 'update successful'
-    } catch (e) {
-      throw new Error(e)
+    if (!post) new UserInputError('No post found with such ID');
+
+    if (post.isPublished) {
+      post.isPublished = false;
+      await post.save();
+
+      return 'post reverted to draft';
+    } else {
+      post.isPublished = true;
+      await post.save();
+
+      return 'post has been published';
     }
   }
 

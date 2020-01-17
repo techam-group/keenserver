@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
   title: {
@@ -23,10 +23,6 @@ const postSchema = new Schema({
     type: Boolean,
     default: false
   },
-  isDraft: {
-    type: Boolean,
-    default: true
-  },
   isPaid: {
     type: Boolean,
     default: false
@@ -46,10 +42,8 @@ const postSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   }
+}, { timestamps: true });
 
-}, { timestamps: true }
-)
+const Post = mongoose.model('Post', postSchema);
 
-const Post = mongoose.model('Post', postSchema)
-
-module.exports = Post
+module.exports = Post;

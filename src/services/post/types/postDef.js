@@ -11,7 +11,6 @@ const postDef = gql`
 
   extend type Mutation {
     addPost(data: postInput): String!
-    updatePost(data: updatePostInput): String
     changeLikeState(id: ID!): String
     changePublishState(id: ID!): String
     deletePost(id: ID!): String
@@ -43,20 +42,19 @@ const postDef = gql`
   }
 
   input postInput {
+    id: ID
     title: String!
     body: String
-    category: String
+    category: [categories]
     image: String
     isPublished: Boolean
   }
-
-  input updatePostInput {
-    id: ID!
-    title: String
-    body: String
-    category: String
-    image: String
-    isPublished: Boolean
+  
+  enum categories {
+    blog
+    vlog
+    tutorial
+    series
   }
 `;
 
