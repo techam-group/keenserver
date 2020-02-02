@@ -10,20 +10,21 @@ const userDef = gql`
   }
 
   extend type Mutation {
-    addUser(data: UserInput!): AddUserResponse!
-    loginUser(data: UserLogin!): LoginResponse!
-    verifyEmail(emailToken: String!): String!
-    updateUser(data: UserInputUpdate): String!
+    addUser(data: UserInput!): String
+    addAdmin(data: UserInput!): String
+    loginUser(data: UserLogin!): LoginResponse
+    verifyEmail(emailToken: String!): String
+    updateUser(data: UserInputUpdate): String
     deleteUser(id: ID!): String
   }
 
   type User {
-    id: ID!
+    id: ID
     firstName: String
     lastName: String
-    username: String!
-    email: String!
-    role: [String]
+    username: String
+    email: String
+    role: Roles
     isActive: Boolean
     isVerified: Boolean
     membership: [String]
@@ -32,10 +33,7 @@ const userDef = gql`
 
   type LoginResponse {
     token: String
-  }
-  
-  type AddUserResponse {
-      token: String
+    role: String
   }
 
   input UserFilterInput {
@@ -59,14 +57,15 @@ const userDef = gql`
     username: String
     firstName: String
     lastName: String
-    role: String
+    role: Roles
+    id: ID
   }
 
   enum Roles {
-    ADMIN
-    EDITOR
-    MODERATOR
-    USER
+    Admin
+    Editor
+    Moderator
+    User
   }
 `;
 

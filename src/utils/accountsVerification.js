@@ -1,67 +1,43 @@
-const { NODE_ENV, USER_NAME, USER_PASS } = process.env;
+const { NODE_ENV, SG_API_KEY } = process.env;
 const dev = NODE_ENV || 'development';
 const nodemailer = require( 'nodemailer' );
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(SG_API_KEY);
+
+const templates = require('../constants/templates');
 
 // Email Verification Service
 class AccountsVerification {
-  async sendMail( email, message, subject ) {
-    dev ? await this.mailTester( email, message, subject ) : await this.mailer( email, message, subject )
+  async sendMail( email, name, type, url ) {
+    dev ? await this.mailTester( email, name, type, url ) : await this.mailer( email, name, type, url )
   }
 
-  async mailTester( email, message, subject ) {
-    // create reusable transporter object using the default SMTP transport
-    let transporter = nodemailer.createTransport( {
-      host: "smtp.mailtrap.io",
-      port: 2525,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: USER_NAME,
-        pass: USER_PASS
+  async mailTester( email, name, type, url ) {
+    const data = {
+      from: "Trace 💩 <developer@keencademics.com>",
+      to: email,
+      templateId: templates[type],
+      dynamic_template_data: {
+        name: name,
+        account_verification_url:  url,
       }
-    } );
+    };
 
-    try {
-      const options = {
-        from: `Trace 💩 <${USER_NAME}>`,
-        to: email,
-        subject: subject,
-        html: message
-      };
-
-      let info = await transporter.sendMail( options );
-
-      console.log( 'Message sent: %s', info.messageId );
-      // console.log( 'Preview URL: %s', nodemailer.getTestMessageUrl( info ) );
-    } catch ( err ) {
-      console.log( err )
-    }
+    await sgMail.send(data);
   }
 
-  async mailer( email, message, subject ) {
-    let transporter = nodemailer.createTransport( {
-      host: "smtp.mailtrap.io",
-      port: 2525,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: USER_NAME,
-        pass: USER_PASS
+  async mailer( email, name, type, url ) {
+    const data = {
+      from: "Trace 💩 <developer@keencademics.com>",
+      to: email,
+      templateId: templates[type],
+      dynamic_template_data: {
+        name: name,
+        account_verification_url:  url,
       }
-    } );
+    };
 
-    try {
-      const options = {
-        from: `"Trace 🖤" <${USER_NAME}>`,
-        to: email,
-        subject: subject,
-        html: message
-      };
-      let info = await transporter.sendMail( options );
-
-      console.log( 'Message sent: %s', info.messageId );
-      // console.log( 'Preview URL: %s', nodemailer.getTestMessageUrl( info ) );
-    } catch ( error ) {
-      console.log( error )
-    }
+    await sgMail.send(data);
   }
 }
 

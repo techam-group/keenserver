@@ -3,3 +3,4 @@ node_modules/
 src/config/config.json
 # src/config/superAdmin.config.js
 .env
+.idea/*

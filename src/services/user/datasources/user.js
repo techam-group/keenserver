@@ -1,4 +1,6 @@
 const { UserInputError, AuthenticationError } = require('apollo-server-express');
+const {CLIENT_URL, CLIENT_URL_LOCAL, NODE_ENV } = process.env;
+const BASE_URL = NODE_ENV ? CLIENT_URL : CLIENT_URL_LOCAL;
 
 const Base = require('../../../base');
 const User = require('../../../models/users/users.schema');
@@ -14,32 +16,65 @@ class user extends Base {
   async addUser(data) {
     if (!data) throw new UserInputError('No provided credentials');
 
-    const foundEmail = await User.findOne({ email: data.email });
+    const foundEmail = await User.findOne({
+      $or: [
+        { username: data.username },
+        { email: data.email }
+      ]
+    });
 
-    if (foundEmail) {
-      throw new AuthenticationError(`User with ${data.email} already exists`)
-    }
+    if (foundEmail) new AuthenticationError(`User with ${data.email} already exists`);
 
+    data.role = "User";
     data.password = await this.hashPassword(data.password);
 
     const user = await User.create(data);
-
-    const payload = {
-      id: user._id,
-      username: user.username,
-      email: user.email
-    };
-    const token = await this.createToken(payload);
 
     if (user) {
       user.emailVerificationToken = await this.getEmailVerifierToken(user.username);
       await user.save();
 
       const message = await this.getEVTTemplate('Registration was successful', user.emailVerificationToken);
-      const subject = 'Account Verification';
+      const subject = 'user_account_creation';
       await this.sendMail(user.email, message, subject);
 
-      return { token }
+      return "Account Creation Successful"
+    }
+  }
+
+  /*
+   * addAdmin to DB
+   * @params: data
+   * returns: new Admin user
+   */
+  async addAdmin(data) {
+    if (!data) throw new UserInputError('No provided credentials');
+
+    const foundEmail = await User.findOne({
+      $or: [
+        { username: data.username },
+        { email: data.email }
+      ]
+    });
+
+    if (foundEmail) {
+      throw new AuthenticationError(`Admin with ${data.email} already exists`)
+    }
+
+    data.role = "Admin";
+    data.password = await this.hashPassword(data.password);
+
+    const user = await User.create(data);
+
+    if (user) {
+      user.emailVerificationToken = await this.getEmailVerifierToken(user.username);
+      await user.save();
+
+      const account_verification_url = `${BASE_URL}/verify-email?token=${user.emailVerificationToken}`;
+      const type = 'admin_account_creation';
+      await this.sendMail(user.email, user.username, type, account_verification_url);
+
+      return "Admin Account Creation Successful"
     }
   }
 
@@ -75,7 +110,10 @@ class user extends Base {
     };
     const token = await this.createToken(payload);
 
-    return { token }
+    return {
+      token,
+      role: user.role
+    }
   }
 
 
@@ -122,7 +160,7 @@ class user extends Base {
 
     try {
       const updatedUser = await User.updateOne(
-        { _id: id },
+        { _id: data.id },
         { $set: { data } },
         { new: true }
       );
@@ -174,7 +212,7 @@ class user extends Base {
         select('-password -__v').
         populate('posts')
     } catch (e) {
-      throw new Error('Ivalid user ID')
+      throw new Error('Invalid user ID')
     }
   }
 
@@ -191,7 +229,7 @@ class user extends Base {
 
       return await User.findOne({ _id: user.id }).select('-password -__v')
     } catch (e) {
-      throw new Error('Ivalid token')
+      throw new Error('Invalid token')
     }
   }
 
@@ -220,7 +258,7 @@ class user extends Base {
 
       return "Your verification token has been sent successfully, Check your email to continue"
     } catch (e) {
-      throw new Error('Ivalid post ID')
+      throw new Error('Invalid post ID')
     }
   }
 
@@ -248,7 +286,7 @@ class user extends Base {
 
       return "Your verification token has been sent successfully, Check your email to continue"
     } catch (e) {
-      throw new Error('Ivalid post ID')
+      throw new Error('Invalid post ID')
     }
   }
 }

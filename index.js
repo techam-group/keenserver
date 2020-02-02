@@ -10,7 +10,7 @@ const cors = require('cors');
 const DB = require('./src/database');
 const superAdminDetails = require('./src/config/superAdmin.config');
 const formatError = require('./src/utils/formatError');
-const allowedOrigins = ["https://keencademiks.now.sh", "https://keenclient.phavor.now.sh", "http://localhost:3000", "localhost:3000"];
+const allowedOrigins = ["https://keencademiks.now.sh", "https://keenclient.phavor.now.sh", "http://localhost:3000"];
 
 const typeDefs = require('./src/types');
 const resolvers = require('./src/resolvers');

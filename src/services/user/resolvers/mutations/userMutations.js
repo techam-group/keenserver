@@ -1,8 +1,12 @@
-const { AuthenticationError } = require('apollo-server-express')
+const { AuthenticationError } = require('apollo-server-express');
 
 const userResolverMutations = {
   addUser: async (_, { data }, { dataSources: { user } }) => {
     return await new user().addUser(data)
+  },
+
+  addAdmin: async (_, { data }, { dataSources: { user } }) => {
+    return await new user().addAdmin(data)
   },
 
   loginUser: async (_, { data }, { dataSources: { user } }) => {
@@ -14,13 +18,14 @@ const userResolverMutations = {
   },
 
   updateUser: async (_, { data }, { AuthUser, dataSources: { user } }) => {
+    if (!AuthUser) throw new AuthenticationError("Not Authenticated, please login to continue...");
     return await new user().updateUser(data)
   },
 
   deleteUser: async (_, { id }, { AuthUser, dataSources: { user } }) => {
-    if (!AuthUser) throw new AuthenticationError("Not Authenticated, please login to continue...")
+    if (!AuthUser) throw new AuthenticationError("Not Authenticated, please login to continue...");
     return await new user().deleteUser(id)
   }
-}
+};
 
-module.exports = userResolverMutations
+module.exports = userResolverMutations;
