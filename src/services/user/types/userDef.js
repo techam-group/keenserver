@@ -5,13 +5,13 @@ const userDef = gql`
     getUsers(filter: UserFilterInput): [User]
     getUser(id: ID!): User
     getCurrentUser(token: String!): User
-    resendEmailVerification(id: ID!): String!
+    resendEmailVerification(email: String!): String!
     sendEmailVerification(id: ID!): String!
   }
 
   extend type Mutation {
-    addUser(data: UserInput!): String
-    addAdmin(data: UserInput!): String
+    addUser(data: UserInput!): AddUserResponse
+    addAdmin(data: UserInput!): AddUserResponse
     loginUser(data: UserLogin!): LoginResponse
     verifyEmail(emailToken: String!): String
     updateUser(data: UserInputUpdate): String
@@ -24,16 +24,23 @@ const userDef = gql`
     lastName: String
     username: String
     email: String
-    role: Roles
+    createdAt: DateTime
+    updatedAt: DateTime
+    role: [String]
     isActive: Boolean
     isVerified: Boolean
     membership: [String]
     posts: [Post]
   }
+  
+  type AddUserResponse {
+      id: ID
+      email: String
+  }
 
   type LoginResponse {
     token: String
-    role: String
+    role: [String]
   }
 
   input UserFilterInput {

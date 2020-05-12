@@ -9,7 +9,7 @@ class Utils {
     return await jwt.sign(payload, SECRET_KEY, { expiresIn: "24h" })
   }
 
-  async getCurrentUser(payload) {
+  async _getCurrentUser(payload) {
     return await jwt.verify(payload, SECRET_KEY)
   }
 

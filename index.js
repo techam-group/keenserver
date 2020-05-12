@@ -12,8 +12,7 @@ const superAdminDetails = require('./src/config/superAdmin.config');
 const formatError = require('./src/utils/formatError');
 const allowedOrigins = ["https://keencademiks.now.sh", "https://keenclient.phavor.now.sh", "http://localhost:3000"];
 
-const typeDefs = require('./src/types');
-const resolvers = require('./src/resolvers');
+const {resolvers, typeDefs} = require('./src/schema');
 const dataSources = require('./src/datasources');
 
 const { getUser } = require('./src/utils/helpers');

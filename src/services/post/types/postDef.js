@@ -7,6 +7,11 @@ const postDef = gql`
     getUserPosts: [Post]
     getAllUserPublishedPosts: [Post]
     getPost(id: ID!): Post
+    countPosts: Float
+    countTutorials: Float
+    countSeries: Float
+    countBlog: Float
+    getAllTutorials: [Post]
   }
 
   extend type Mutation {
@@ -25,8 +30,8 @@ const postDef = gql`
     isPublished: Boolean
     isDraft: Boolean
     isPaid: Boolean
-    createdAt: String
-    updatedAt: String
+    createdAt: DateTime
+    updatedAt: DateTime
     category: [String]
     comments: [Comment]
     author: User

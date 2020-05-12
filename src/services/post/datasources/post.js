@@ -166,6 +166,17 @@ class post extends Base {
   }
 
   /*
+  * getAllTutorials
+  * returns: an array of all tutorial posts by a user
+  */
+  async getAllTutorials(filter) {
+    return await Post.find({
+      category: 'tutorial',
+      isPublished: true
+    }, null, filter)
+  }
+
+  /*
   * getUserPosts
   * @params: ID
   * returns: an array of posts for a user
@@ -199,6 +210,22 @@ class post extends Base {
     } catch (e) {
       throw new Error('Ivalid ID')
     }
+  }
+
+  async countPosts (user) {
+    return await Post.countDocuments({author: user.id});
+  }
+
+  async countBlog (user) {
+    return await Post.countDocuments({author: user.id, category: "blog"});
+  }
+
+  async countTutorials (user) {
+    return await Post.countDocuments({author: user.id, category: "tutorial"});
+  }
+
+  async countSeries (user) {
+    return await Post.countDocuments({author: user.id, category: "series"});
   }
 }
 

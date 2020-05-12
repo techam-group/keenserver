@@ -15,5 +15,7 @@ module.exports = {
   Mutation: {
     ...userMutations,
     ...postMutations
-  }
+  },
+
+  Subscription: {}
 };

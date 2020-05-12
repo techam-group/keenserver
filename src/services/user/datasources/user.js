@@ -38,7 +38,10 @@ class user extends Base {
       const subject = 'user_account_creation';
       await this.sendMail(user.email, message, subject);
 
-      return "Account Creation Successful"
+      return {
+        id: user._id,
+        email: user.email
+      }
     }
   }
 
@@ -74,7 +77,10 @@ class user extends Base {
       const type = 'admin_account_creation';
       await this.sendMail(user.email, user.username, type, account_verification_url);
 
-      return "Admin Account Creation Successful"
+      return {
+        id: user._id,
+        email: user.email
+      }
     }
   }
 
@@ -116,7 +122,6 @@ class user extends Base {
     }
   }
 
-
   /*
   * emailVerification
   * @query: token
@@ -129,7 +134,7 @@ class user extends Base {
       if (isValid) {
         const user = await User.findOne({ emailVerificationToken: data });
 
-        if (user.isVerified) return 'User is already verified, please continue to login...';
+        if (!user) return 'User is already verified, please continue to login...';
 
         if (user) {
           user.emailVerificationToken = null;
@@ -225,7 +230,7 @@ class user extends Base {
     if (!token) throw new UserInputError('No provided token');
 
     try {
-      const user = await jwt.verify(token, process.env.SECRET_KEY);
+      const user = await this._getCurrentUser(token);
 
       return await User.findOne({ _id: user.id }).select('-password -__v')
     } catch (e) {
@@ -239,27 +244,20 @@ class user extends Base {
   * @params: ID
   * returns: a string
   */
-  async resendEmailVerification(id) {
-    try {
-      const foundUser = await User.findById(id);
+  async resendEmailVerification(email) {
+    const foundUser = await User.findOne({email});
 
-      if (!foundUser) throw new AuthenticationError('User not found');
+    if (!foundUser) new AuthenticationError('User not found');
+    if (foundUser.isVerified) return "You have already been verified. Please continue to login...";
 
-      if (foundUser.isVerified) return "You have already been verified. Please continue to login...";
+    foundUser.emailVerificationToken = await this.getEmailVerifierToken(email);
+    await foundUser.save();
 
-      foundUser.emailVerificationToken = await this.getEmailVerifierToken(id);
+    const account_verification_url = `${BASE_URL}/verify-email?token=${foundUser.emailVerificationToken}`;
+    const type = 'resend_activation';
+    await this.sendMail(foundUser.email, foundUser.username, type, account_verification_url);
 
-      await foundUser.save();
-
-      const message = await this.getEVTTemplate('Email Verification', foundUser.emailVerificationToken, 'resend');
-      const subject = 'Account Verification';
-
-      this.sendMail(foundUser.email, message, subject);
-
-      return "Your verification token has been sent successfully, Check your email to continue"
-    } catch (e) {
-      throw new Error('Invalid post ID')
-    }
+    return 'Token resent'
   }
 
   /*
@@ -271,7 +269,7 @@ class user extends Base {
     try {
       const foundUser = await User.findById(id);
 
-      if (!foundUser) throw new AuthenticationError('User not found');
+      if (!foundUser) new AuthenticationError('User not found');
 
       if (foundUser.isVerified) return 'Already verified';
 
